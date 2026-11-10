@@ -2,6 +2,7 @@
 • For this project, I’d use a small Python layout organized around the pipeline described in the README: collecting catalog data, cleaning and
   chunking it, indexing it in ChromaDB, retrieving relevant material, and presenting grounded recommendations.
  
+ ```
   final-proj/
   ├── README.md
   ├── pyproject.toml
@@ -28,7 +29,7 @@
   │   ├── test_processing.py
   │   └── test_retrieval.py
   └── docs/                 # architecture, data sources, and evaluation notes
- 
+ ```
   Keep the source code in one importable package, and make each data stage explicit (raw → processed → ChromaDB). That should make it easier
   for teammates to work on ingestion, retrieval, and the interface independently.
   
