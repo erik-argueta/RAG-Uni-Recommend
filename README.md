@@ -13,9 +13,118 @@ Our group plans to compile data on academic catalogs obtained from the universit
 ## Steps and Procedures 
 Our group will begin with gathering academic catalog information from universities’ websites in California; we may use a web scraper for this process. We will then process and clean the collected data. Next, we will use OpenAI’s text embedding model to convert the information into vectors, which will then be stored in a ChromaDB collection. Using the user’s input on their field of interest, the model will generate university comparisons and provide a supported recommendation based on the catalog information. We will evaluate the model’s retrieval relevance and accuracy by submitting different types of user inputs.
 
-## Team Responsibilities
-The team responsibilities will be divided by the different stages of the project. Jose will be responsible and lead the data collection and pre-processing; Erik will be responsible for and lead setting up RAG and embeddings; Jerico will be leading the LLM integration and backend; Jose will be responsible for the User Interface and evaluation. Although each member is in charge of a different area, the group will assist one another to ensure that each phase is completed efficiently.
+## Dependencies  (update as needed)
 
+
+# Roles and Responsibilities 
+1. Web Scraping and Data Collection 
+    Collect degree information from CSUF and later nearby CSUs.
+	* Develop/Utilize Python web scrapers 
+	* Extract majors, courses, descriptions, and degree requirements 
+	* Standardize the cllected information into JSON 
+	* Preserve university names and catalog URLs  
+    * Deliverable: Structured dataset contatining university degree information.
+
+2. Data Processing & Vector Database 
+    Transform the collected information into something RAG system can search.
+	* Clean and preprocess scraped data.
+	* Develop and test chunking strategies. 
+	* Generate embeddings using an embedding model.
+	* Store embeddings and metadata in **Chroma**  
+	* Evaluate retrieval relevance.  
+    * Deliverable: A functioning Chroma vector database that returns relevant university information.  
+
+3. RAG Pipeline & LLM Integration  
+    Build the recommendation system that interacts with the user. 
+	* Accept users' academic interests and preferences.
+	* Translate those preferences into retrieval queries. 
+	* Retrieve relevant information from **Chroma**.  
+	* Integrate the OpenAI API to generate comparisons. 
+	* Ensure recommendations cite the university catalogs.  
+    * Deliverable: A functioning RAG backend tha tcompares universities using retrieved information.
+
+4. Front-End Development 
+
+
+# JSON Structure
+We will use 2 JSON record types to help the recommendation system: **Course Records** and **Degree Requirements**  
+
+## Course Records 
+```JSON 
+{
+  "id": "university-a-cs-101-2026",
+  "record_type": "course",
+  "university": "University A",
+  "department": "Computer Science",
+  "course_code": "CS 101",
+  "course_title": "Artificial Intelligence",
+  "description": "An introduction to AI, machine learning, and search algorithms.",
+  "units": 3,
+  "prerequisites": ["CS 100"],
+  "catalog_year": "2026-2027",
+  "source_url": "https://example.edu/courses/cs101"
+}
+```
+
+## Degree Requirements
+```JSON 
+{
+  "id": "university-a-bs-cs-2026",
+  "record_type": "degree_program",
+  "university": "University A",
+  "major": "Computer Science",
+  "degree": "Bachelor of Science",
+  "catalog_year": "2026-2027",
+  "total_units": 120,
+  "core_courses": [
+    "CS 100",
+    "CS 101",
+    "CS 200"
+  ],
+  "elective_courses": [
+    "CS 310",
+    "CS 320"
+  ],
+  "concentrations": [
+    "Artificial Intelligence",
+    "Cybersecurity"
+  ],
+  "source_url": "https://example.edu/programs/computer-science"
+}
+```
+
+# Project Structure 
+ ```
+  final-proj/
+  ├── README.md
+  ├── pyproject.toml
+  ├── uv.lock
+  ├── .env.example
+  ├── .gitignore
+  ├── data/
+  │   ├── raw/              # downloaded catalogs; usually gitignored
+  │   ├── processed/        # cleaned, normalized catalog records
+  │   └── sample/           # small, safe-to-commit examples for development
+  ├── chroma/               # local vector database; gitignored
+  ├── src/
+  │   └── university_recommender/
+  │       ├── __init__.py
+  │       ├── config.py     # environment variables and settings
+  │       ├── ingestion/    # catalog collection and parsing
+  │       ├── processing/   # cleaning, metadata, and chunking
+  │       ├── embeddings.py
+  │       ├── retrieval.py
+  │       ├── recommendations.py
+  │       └── interface.py  # UI or API entry point
+  ├── scripts/              # commands to ingest, index, and run the app
+  ├── tests/
+  │   ├── test_processing.py
+  │   └── test_retrieval.py
+  └── docs/                 # architecture, data sources, and evaluation notes
+ ```
+
+
+# Misc
 ## How to Initialize
 * If using uv, run the following within the project's home directory:  
 `uv pip install -r requirements.txt`
@@ -45,3 +154,5 @@ Otherwise, please include the venv within .gitignore
 ## Branching  
 Please work in a different branch until you're ready to merge with main.  
 Please notify the group when a push has been made on the main branch.
+
+
