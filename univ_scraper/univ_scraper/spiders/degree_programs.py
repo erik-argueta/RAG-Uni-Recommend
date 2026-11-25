@@ -8,13 +8,14 @@ import scrapy
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_INPUT_DIR = PROJECT_ROOT / "docs" / "degree_html" / "CSUF"
 
 
 class DegreeProgramsSpider(scrapy.Spider):
     name = "degree_programs"
     custom_settings = {
         "FEEDS": {
-            str(PROJECT_ROOT / "data" / "raw" / "csuf_bs_degrees.json"): {
+            str(PROJECT_ROOT / "data" / "raw" / "degree_programs.json"): {
                 "format": "json",
                 "overwrite": True,
                 "encoding": "utf8",
@@ -24,15 +25,21 @@ class DegreeProgramsSpider(scrapy.Spider):
 
     async def start(self):
         """Parse locally saved program pages; do not request the live catalog."""
-        pages = sorted((PROJECT_ROOT / "docs" / "degree_html" / "CSUF").glob("*.html"))
+        input_dir = Path(self.input_dir).expanduser()
+        if not input_dir.is_absolute():
+            input_dir = Path.cwd() / input_dir
+        pages = sorted(input_dir.glob("*.html"))
+        if not pages:
+            self.logger.warning("No HTML files found in %s", input_dir)
 
         for page in pages:
             yield scrapy.Request(
                 page.as_uri(),
                 callback=self.parse_program,
+                cb_kwargs={"university": self.university},
             )
 
-    def parse_program(self, response):
+    def parse_program(self, response, university):
         title = response.css("#acalog-page-title::text").get()
         if not title:
             title = response.css("title::text").get(default="")
@@ -85,14 +92,18 @@ class DegreeProgramsSpider(scrapy.Spider):
             if course_name not in destination:
                 destination.append(course_name)
 
-        slug = unicodedata.normalize("NFKD", major).encode("ascii", "ignore").decode()
-        slug = re.sub(r"[^a-zA-Z0-9]+", "-", slug).strip("-").lower()
-        year_slug = catalog_year or "unknown"
+        def make_slug(value):
+            value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
+            return re.sub(r"[^a-zA-Z0-9]+", "-", value).strip("-").lower()
 
+        school_slug = make_slug(university)
+        major_slug = make_slug(major)
+        year_slug = catalog_year or "unknown"
+        
         yield {
-            "id": f"csuf-bs-{slug}-{year_slug}",
+            "id": f"{school_slug}-bs-{major_slug}-{year_slug}",
             "record_type": "degree_program",
-            "university": "California State University, Fullerton",
+            "university": university,
             "major": major,
             "degree": "Bachelor of Science",
             "catalog_year": catalog_year,
@@ -101,3 +112,13 @@ class DegreeProgramsSpider(scrapy.Spider):
             "elective_courses": elective_courses,
             "concentrations": [],
         }
+
+    def __init__(
+        self,
+        input_dir=str(DEFAULT_INPUT_DIR),
+        university="California State University, Fullerton",
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.input_dir = input_dir
+        self.university = university
