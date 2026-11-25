@@ -1,5 +1,16 @@
 # Miscellaneuos
-scrapy-tut/
+data/raw/degree_html/CSUF/Program_ Communicative Disorders, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Computer Engineering, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Computer Science, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Electrical Engineering, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Engineering, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Geology, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Human Services, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Kinesiology, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Mechanical Engineering, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Nursing, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Physics, B.S. - California State University Fullerton.html
+data/raw/degree_html/CSUF/Program_ Public Health, B.S. - California State University Fullerton.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
