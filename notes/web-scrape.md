@@ -4,7 +4,7 @@ Notes for the web-scraping portion
 https://fullerton.catalog.acalog.com/content.php?catoid=101&navoid=15150
 
 ## To Run
-Because the scraper is located at the root, remember to go back a directory first.  
+Since you can only run the scraper from its directory, remember to go up a directory first.  
 The scraper goes through the entire directory of HTML's.  
 
 ``` bash

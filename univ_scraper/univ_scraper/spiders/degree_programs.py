@@ -67,6 +67,26 @@ class DegreeProgramsSpider(scrapy.Spider):
             if total_match:
                 total_units = int(total_match.group(1))
 
+        concentrations = []
+        concentration_headings = response.xpath(
+            '//*[self::h2 or self::h3 or self::h4 or self::h5 or self::h6]'
+            '[contains(translate(normalize-space(string(.)), '
+            '"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "concentration")]'
+        )
+        for heading in concentration_headings:
+            for link in heading.xpath('following-sibling::ul[1]//a'):
+                concentration = " ".join(link.xpath(".//text()").getall())
+                concentration = " ".join(concentration.replace("\xa0", " ").split())
+                concentration = re.sub(
+                    rf"^{re.escape(major)}\s*,?\s*B\.S\.\s*,?\s*",
+                    "",
+                    concentration,
+                    flags=re.I,
+                )
+                concentration = re.sub(r"\s+Concentration$", "", concentration, flags=re.I)
+                if concentration and concentration not in concentrations:
+                    concentrations.append(concentration)
+
         core_courses = []
         elective_courses = []
         for course_link in response.css("li.acalog-course a"):
@@ -99,6 +119,9 @@ class DegreeProgramsSpider(scrapy.Spider):
         school_slug = make_slug(university)
         major_slug = make_slug(major)
         year_slug = catalog_year or "unknown"
+        source_url = response.xpath(
+            '//comment()[contains(., "saved from url=")]/text()'
+        ).re_first(r"saved from url=\(\d+\)(https?://[^\s]+)")
         
         yield {
             "id": f"{school_slug}-bs-{major_slug}-{year_slug}",
@@ -110,7 +133,8 @@ class DegreeProgramsSpider(scrapy.Spider):
             "total_units": total_units,
             "core_courses": core_courses,
             "elective_courses": elective_courses,
-            "concentrations": [],
+            "concentrations": concentrations,
+            "source_url": source_url,
         }
 
     def __init__(

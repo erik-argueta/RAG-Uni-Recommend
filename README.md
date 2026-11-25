@@ -6,7 +6,6 @@
 
 ## Important Updates
 * Current Scope: STEM B.S Degree Programs **ONLY**
-  * No Concentrations
   * No source URL
 * Obtaining Academic Catalogs is done manually; scraper is set up to scrape information off saved html's of the specific degree requirement.
 
